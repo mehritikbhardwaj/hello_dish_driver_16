@@ -1,0 +1,260 @@
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:hello_dish_driver/screens/Wallet/ui/components/order_card.dart';
+import 'package:hello_dish_driver/screens/Wallet/ui/components/withdraw_widget.dart';
+import 'package:hello_dish_driver/utils/AppColors.dart';
+import 'package:hello_dish_driver/utils/sizedBox.dart';
+import 'package:iconsax/iconsax.dart';
+
+import 'controller/wallet_controller.dart';
+
+class WalletScreen extends StatefulWidget {
+  const WalletScreen({super.key});
+
+  @override
+  State<WalletScreen> createState() => _WalletScreenState();
+}
+
+class _WalletScreenState extends State<WalletScreen> {
+  bool isAdd = true;
+
+  final WalletController walletController = Get.put(
+    WalletController(),
+  );
+  bool isWith = true;
+
+  bool showField = false;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    walletController.getTransList();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GetBuilder<WalletController>(
+      builder: (walletController) {
+        return Scaffold(
+          appBar: AppBar(
+            title: Text(
+              'Wallet',
+            ),
+          ),
+          body: walletController.isLoading.value
+              ? Center(
+                  child: CircularProgressIndicator(),
+                )
+              : Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Total Balance',
+                      style: GoogleFonts.poppins(color: AppColors.grey),
+                    ),
+                    Row(
+                      children: [
+                        Text(
+                          "₹ ",
+                          style: GoogleFonts.nunito(fontSize: 36.0),
+                        ),
+                        Text(
+                          walletController.response!.value.driverWallet.total
+                              .toString(),
+                          style: GoogleFonts.poppins(fontSize: 36.0),
+                        ),
+                      ],
+                    ),
+                    walletController.amountTextFieldAddVisible ||
+                            walletController.amountTextFieldWithdrawVisible
+                        ? Row(
+                            children: [
+                              Expanded(
+                                flex: 6,
+                                child: TextFormField(
+                                  controller:
+                                      walletController.addAmountTextController,
+                                  keyboardType: TextInputType.number,
+                                  decoration: InputDecoration(
+                                    labelText: "Add 💸".tr,
+                                    prefixIcon: const Icon(
+                                      Iconsax.wallet,
+                                      size: 20.0,
+                                    ),
+                                  ),
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Number can`t be empty'.tr;
+                                    }
+                                    // else if (value.length < 10) {
+                                    //   return 'Number should be 10 digit'.tr;
+                                    // }
+                                    else {
+                                      return null;
+                                    }
+                                  },
+                                ),
+                              ),
+                              Expanded(
+                                flex: 1,
+                                child: GestureDetector(
+                                    onTap: () {
+                                      walletController
+                                          .amountTextFieldAddVisible = false;
+                                      walletController
+                                              .amountTextFieldWithdrawVisible =
+                                          false;
+                                      walletController.addAmountTextController
+                                          .clear();
+
+                                      walletController.update();
+                                    },
+                                    child:
+                                        const Icon(Icons.close)), //wallet_add
+                              )
+                            ],
+                          ).paddingOnly(top: 18.0)
+                        : Container(),
+                    boxA1(),
+                    Row(
+                      children: [
+                        Expanded(
+                          flex: 6,
+                          child: ElevatedButton(
+                              style: walletController.amountTextFieldAddVisible
+                                  ? ButtonStyle(
+                                      foregroundColor:
+                                          const MaterialStatePropertyAll(
+                                              AppColors.white),
+                                      backgroundColor:
+                                          const MaterialStatePropertyAll(
+                                              AppColors.theme),
+                                      shape: MaterialStatePropertyAll(
+                                        RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(100.0),
+                                          side: const BorderSide(
+                                              color: AppColors.white),
+                                        ),
+                                      ))
+                                  : ButtonStyle(
+                                      foregroundColor:
+                                          const MaterialStatePropertyAll(
+                                              AppColors.grey),
+                                      backgroundColor:
+                                          const MaterialStatePropertyAll(
+                                              AppColors.backgroundBlueColour),
+                                      shape: MaterialStatePropertyAll(
+                                        RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(100.0),
+                                          side: const BorderSide(
+                                              color: AppColors.grey),
+                                        ),
+                                      )),
+                              onPressed: () async {
+                                walletController.amountTextFieldAddVisible =
+                                    true;
+                                walletController
+                                    .amountTextFieldWithdrawVisible = false;
+
+                                walletController.update();
+                              },
+                              child: const Text("Add")),
+                        ),
+                        const Spacer(),
+                        Expanded(
+                          flex: 6,
+                          child: ElevatedButton(
+                              style: walletController
+                                      .amountTextFieldWithdrawVisible
+                                  ? ButtonStyle(
+                                      foregroundColor:
+                                          const MaterialStatePropertyAll(
+                                              AppColors.white),
+                                      backgroundColor:
+                                          const MaterialStatePropertyAll(
+                                              AppColors.theme),
+                                      shape: MaterialStatePropertyAll(
+                                        RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(100.0),
+                                          side: const BorderSide(
+                                              color: AppColors.white),
+                                        ),
+                                      ))
+                                  : ButtonStyle(
+                                      foregroundColor:
+                                          const MaterialStatePropertyAll(
+                                              AppColors.grey),
+                                      backgroundColor:
+                                          const MaterialStatePropertyAll(
+                                              AppColors.backgroundBlueColour),
+                                      shape: MaterialStatePropertyAll(
+                                        RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(100.0),
+                                          side: const BorderSide(
+                                              color: AppColors.grey),
+                                        ),
+                                      )),
+                              onPressed: () async {
+                                walletController
+                                    .amountTextFieldWithdrawVisible = true;
+                                walletController.amountTextFieldAddVisible =
+                                    false;
+
+                                walletController.update();
+                              },
+                              child: const Text("Withdraw ")),
+                        ),
+                      ],
+                    ),
+                    boxA2(),
+                    Row(
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Latest',
+                              style: GoogleFonts.poppins(color: AppColors.grey),
+                            ),
+                            Text(
+                              'Transaction',
+                              style: GoogleFonts.poppins(fontSize: 24.0),
+                            ),
+                          ],
+                        ),
+                        const Spacer(),
+                        // Text(
+                        //   'More',
+                        //   style: GoogleFonts.poppins(color: AppColors.grey),
+                        // ),
+                      ],
+                    ),
+                    boxA2(),
+                    //   for(int i=)
+                    const OrderCard(
+                        type: 'Order Income',
+                        price: '₹ 50.5',
+                        gain: true,
+                        date: '03 Feb 2023 at 11:07PM'),
+                    const OrderCard(
+                        type: 'Order Income',
+                        price: '₹ 100',
+                        gain: true,
+                        date: '03 Feb 2023 at 11:07PM'),
+                    const OrderCard(
+                        type: 'Buy TShirt',
+                        price: '- ₹ 100',
+                        gain: false,
+                        date: '03 Feb 2023 at 11:07PM'),
+                  ],
+                ).paddingAll(18.0),
+        );
+      },
+    );
+  }
+}
