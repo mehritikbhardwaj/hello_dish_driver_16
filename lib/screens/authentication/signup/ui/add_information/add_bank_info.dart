@@ -88,6 +88,8 @@ class _AddBankInfoScreenState extends State<AddBankInfoScreen> {
               child: DCustomTextField(
                 controller: signUpContr.bankIFSCController,
                 textInputAction: TextInputAction.done,
+                maxLength: 15,
+                textCapitalization: TextCapitalization.characters,
                 hintText: 'IFSC code',
               ),
             ),

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -29,9 +31,17 @@ class _HomeScreenState extends State<HomeScreen> {
     Get.put(GetAllOrderController());
     Get.find<GetAllOrderController>().getOrderList();
     SharedPref.shared.getPref();
-    controller.getProfileResponse();
-
+    controller.updateLatLng();
     controller.getCurrentLoc(context);
+    callApis();
+    Timer.periodic(Duration(seconds: 30), (timer) {
+      controller.updateLatLng();
+    });
+  }
+
+  callApis() async {
+    await controller.getProfileResponse();
+    controller.getCurrentActiveOrder();
   }
 
   @override
@@ -92,9 +102,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                         SizedBox(
                           width: SizeConfig.Width * 1,
-                          child: driverOrdersCard(onPressed: () {
-                            Get.to(DriverOrderTrackingScreen());
-                          }),
+                          child: driverOrdersCard(),
                         ).paddingOnly(left: 18.0, right: 18.0),
                       ],
                     )),

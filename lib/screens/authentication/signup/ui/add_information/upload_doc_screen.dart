@@ -28,74 +28,89 @@ class _UploadDocScreenState extends State<UploadDocScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        leading: GestureDetector(
-            onTap: () {
-              Get.back();
-            },
-            child: Icon(Icons.arrow_back_ios, color: Colors.grey)),
-        title: GestureDetector(
-          onTap: () {
-            //   Get.back();
-          },
-          child: Row(
-            children: [
-              Text(
-                'Upload your document',
-                style: GoogleFonts.poppins(
-                  fontWeight: FontWeight.w500,
-                  fontSize: 14,
+    return GetBuilder<SignupController>(
+        builder: (c) => Stack(
+              children: [
+                Scaffold(
+                  appBar: AppBar(
+                    leading: GestureDetector(
+                        onTap: () {
+                          Get.back();
+                        },
+                        child: Icon(Icons.arrow_back_ios, color: Colors.grey)),
+                    title: GestureDetector(
+                      onTap: () {
+                        //   Get.back();
+                      },
+                      child: Row(
+                        children: [
+                          Text(
+                            'Upload your document',
+                            style: GoogleFonts.poppins(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  body: ListView(
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    children: [
+                      boxA3(),
+                      _buildFileSection(
+                          title: 'ADHAR CARD',
+                          frontTitle: 'FRONT',
+                          backTitle: 'BACK',
+                          frontValid: _isFrontAdharValid,
+                          backValid: _isBackAdharValid,
+                          signUpContr: signUpContr),
+                      boxA3(),
+                      _buildFileSection(
+                          title: 'PAN CARD',
+                          frontTitle: 'FRONT',
+                          frontValid: _isFrontPanValid,
+                          signUpContr: signUpContr),
+                      boxA3(),
+                      _buildFileSection(
+                          title: 'DRIVING LICENSE',
+                          frontTitle: 'FRONT',
+                          backTitle: 'BACK',
+                          frontValid: _isFrontDrivingLicenseValid,
+                          backValid: _isBackDrivingLicenseValid,
+                          signUpContr: signUpContr),
+                      boxA3(),
+                      _buildFileSection(
+                          title: 'IDENTITY PROOF (SELFIE)',
+                          frontTitle: 'SELFIE',
+                          frontValid: _isSelfieValid,
+                          signUpContr: signUpContr),
+                      boxA3(),
+                      CustomRoundedElevatedButton(
+                        text: 'Continue',
+                        onPressed: () {
+                          if (_validateAndShowSnackBar(signUpContr)) {
+                            signUpContr.printPara();
+                            Get.to(const AddBankInfoScreen());
+                          }
+                        },
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
-          ),
-        ),
-      ),
-      body: ListView(
-        padding: const EdgeInsets.symmetric(horizontal: 12),
-        children: [
-          boxA3(),
-          _buildFileSection(
-              title: 'ADHAR CARD',
-              frontTitle: 'FRONT',
-              backTitle: 'BACK',
-              frontValid: _isFrontAdharValid,
-              backValid: _isBackAdharValid,
-              signUpContr: signUpContr),
-          boxA3(),
-          _buildFileSection(
-              title: 'PAN CARD',
-              frontTitle: 'FRONT',
-              frontValid: _isFrontPanValid,
-              signUpContr: signUpContr),
-          boxA3(),
-          _buildFileSection(
-              title: 'DRIVING LICENSE',
-              frontTitle: 'FRONT',
-              backTitle: 'BACK',
-              frontValid: _isFrontDrivingLicenseValid,
-              backValid: _isBackDrivingLicenseValid,
-              signUpContr: signUpContr),
-          boxA3(),
-          _buildFileSection(
-              title: 'IDENTITY PROOF (SELFIE)',
-              frontTitle: 'SELFIE',
-              frontValid: _isSelfieValid,
-              signUpContr: signUpContr),
-          boxA3(),
-          CustomRoundedElevatedButton(
-            text: 'Continue',
-            onPressed: () {
-              if (_validateAndShowSnackBar(signUpContr)) {
-                signUpContr.printPara();
-                Get.to(const AddBankInfoScreen());
-              }
-            },
-          ),
-        ],
-      ),
-    );
+                Obx(() {
+                  return signUpContr.isLoading.value
+                      ? Center(
+                          child: const SizedBox(
+                              // width: 30,
+                              // height: 30,
+                              child: CircularProgressIndicator()),
+                        )
+                      : Container();
+                })
+              ],
+            ));
   }
 
   Widget _buildFileSection({
@@ -149,33 +164,42 @@ class _UploadDocScreenState extends State<UploadDocScreen> {
                     signUpContr.selfie = value;
                   }
                 },
+                selectedFile: title == 'ADHAR CARD'
+                    ? signUpContr.adharFront!
+                    : title == 'PAN CARD'
+                        ? signUpContr.panCard!
+                        : title == 'DRIVING LICENSE'
+                            ? signUpContr.drivingFront!
+                            : signUpContr.selfie!,
               ),
             ),
             if (backTitle != null) boxB3(),
             if (backTitle != null)
               Expanded(
                 child: AddFileCard(
-                  title: backTitle,
-                  onChanged: (isValid) {
-                    setState(() {
-                      if (backTitle == 'BACK') {
-                        if (title == 'ADHAR CARD') {
-                          _isBackAdharValid = isValid;
-                        } else if (title == 'DRIVING LICENSE') {
-                          _isBackDrivingLicenseValid = isValid;
+                    title: backTitle,
+                    onChanged: (isValid) {
+                      setState(() {
+                        if (backTitle == 'BACK') {
+                          if (title == 'ADHAR CARD') {
+                            _isBackAdharValid = isValid;
+                          } else if (title == 'DRIVING LICENSE') {
+                            _isBackDrivingLicenseValid = isValid;
+                          }
                         }
+                      });
+                    },
+                    forCamera: false,
+                    file: (value) {
+                      if (title == 'ADHAR CARD') {
+                        signUpContr.adharBack = value;
+                      } else {
+                        signUpContr.drivingBack = value;
                       }
-                    });
-                  },
-                  forCamera: false,
-                  file: (value) {
-                    if (title == 'ADHAR CARD') {
-                      signUpContr.adharBack = value;
-                    } else {
-                      signUpContr.drivingBack = value;
-                    }
-                  },
-                ),
+                    },
+                    selectedFile: title == 'ADHAR CARD'
+                        ? signUpContr.adharBack!
+                        : signUpContr.drivingBack!),
               ),
           ],
         ),

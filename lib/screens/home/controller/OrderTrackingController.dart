@@ -1,9 +1,14 @@
+import 'dart:convert';
+
 import 'package:flutter/widgets.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import '../../../utils/AppColors.dart';
+import 'package:http/http.dart' as http;
 
 class OrderTrackingController extends GetxController {
   GoogleMapController? gMapcontroller;
@@ -15,7 +20,6 @@ class OrderTrackingController extends GetxController {
 
   @override
   void onInit() {
-    // TODO: implement onInit
     super.onInit();
     markerIconSet();
   }
@@ -46,20 +50,19 @@ class OrderTrackingController extends GetxController {
       //   icon: driverLocationIcon!,
       // );
     });
-    policreate();
     update();
   }
 
   //
 
-  policreate({workLocationLatLng}) async {
+  policreate(LatLng driverLocation, LatLng destination) async {
     List<LatLng> polylineCoordinates = [];
 
     PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
       'AIzaSyBCiNLh0ZNX51eFTnKk7DvTt5pxf-T18c0',
 
-      PointLatLng(20.8009, 70.6960), //kodinar
-      PointLatLng(22.3039, 70.8022), //rajkot
+      PointLatLng(destination.latitude, destination.longitude), //kodinar
+      PointLatLng(driverLocation.latitude, driverLocation.longitude), //rajkot
       travelMode: TravelMode.driving,
     );
 
@@ -70,12 +73,12 @@ class OrderTrackingController extends GetxController {
     }
     markers['userLocationMarker'] = Marker(
       markerId: MarkerId('userLocationMarker'),
-      position: LatLng(20.8009, 70.6960),
+      position: destination,
       icon: userLocationIcon!,
     );
     markers['driverLocationMarker'] = Marker(
       markerId: MarkerId('driverLocationMarker'),
-      position: LatLng(22.3039, 70.8022),
+      position: driverLocation,
       icon: driverLocationIcon!,
     );
     addPolyLine(polylineCoordinates);
@@ -137,5 +140,70 @@ class OrderTrackingController extends GetxController {
     }
     update();
   }
-  //
+
+  RxDouble latitude = 0.0.obs;
+  RxDouble longitude = 0.0.obs;
+
+  Future<void> getCurrentLoc(
+      BuildContext context, LatLng destinationLatLng) async {
+    LocationPermission permission;
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.deniedForever) {
+        return Future.error('Location Not Available');
+      }
+    }
+    Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+
+    latitude.value = position.latitude;
+    longitude.value = position.longitude;
+    //polyLines = {};
+    policreate(LatLng(latitude.value, longitude.value), destinationLatLng);
+  }
+
+  String distanceLeft = "";
+  String timeLeft = "";
+  getTimeAndDistanceFromAddress(
+      String startingAddress, String endingAddress) async {
+    var request = http.Request(
+        'GET',
+        Uri.parse(
+            'https://maps.googleapis.com/maps/api/distancematrix/json?origins=$startingAddress&destinations=$endingAddress&departure_time=now&mode=driving&key=AIzaSyA0mRlUvgR2LbYdrkqaGmJjaSO5LSgz7d8'));
+
+    http.StreamedResponse response = await request.send();
+
+    if (response.statusCode == 200) {
+      final res = await http.Response.fromStream(response);
+      final Map<String, dynamic> json = await jsonDecode(res.body);
+      print(res.body.toString() + "DISTANCE RESP");
+      distanceLeft = json["rows"][0]["elements"][0]["distance"]["text"];
+      timeLeft = json["rows"][0]["elements"][0]["duration"]["text"];
+      update();
+    } else {
+      print(response.reasonPhrase);
+    }
+  }
+
+  Future<String> getAddressFromLatLng(LatLng addressLatLng) async {
+    List<Placemark> placemark = await placemarkFromCoordinates(
+        double.parse("22.763232"), double.parse("75.8713685"),
+        localeIdentifier: "en");
+
+    print(placemark.toList().toString() + "ADDRESSS");
+
+    var address = (placemark[0].name ?? "") +
+        " " +
+        (placemark[0].subLocality! ?? "") +
+        (placemark[0].locality! ?? "") +
+        (placemark[0].administrativeArea! ?? "") +
+        (placemark[0].postalCode! ?? "");
+    // var stateName =
+    //     stateAbbreviationMapFunction(placemark[0].administrativeArea!);
+
+    // name.value = placemark[0].locality!;
+    // area.value = placemark[0].subLocality!;
+    return address;
+  }
 }

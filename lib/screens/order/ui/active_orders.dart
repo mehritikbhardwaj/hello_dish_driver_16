@@ -9,68 +9,69 @@ import '../../../utils/sizedBox.dart';
 import '../components/order_cards.dart';
 import 'oder_status.dart';
 
-class ActiveOrdersScreeen extends StatelessWidget {
+class ActiveOrdersScreeen extends StatefulWidget {
   const ActiveOrdersScreeen({super.key});
 
   @override
+  State<ActiveOrdersScreeen> createState() => _ActiveOrdersScreeenState();
+}
+
+class _ActiveOrdersScreeenState extends State<ActiveOrdersScreeen> {
+  final OrderController controller = Get.put(OrderController());
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    controller.getOrderList();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    // return Scaffold(
-    //   body: SingleChildScrollView(
-    //     child: Column(
-    //       crossAxisAlignment: CrossAxisAlignment.start,
-    //       children: [
-    //         boxA1(),
-    //         SizedBox(
-    //           width: SizeConfig.Width * 1,
-    //           child: orderCard(() {Get.to(OrderStatus());}, true),
-    //         ).paddingOnly(left: 18.0, right: 18.0),
-    //         // boxA3(),
-    //         SizedBox(
-    //           width: SizeConfig.Width * 1,
-    //           child: orderCard(() {}, false),
-    //         ).paddingOnly(left: 18.0, right: 18.0),
-    //       ],
-    //     ),
-    //   ),
-    // );
-    return Scaffold(
-      body: SafeArea(
-        child: GetBuilder<OrderController>(
-          builder: (c) {
-            if(c.allOrderList?.value.data!=null) {
-              return Container(
-                height: SizeConfig.Height * 0.9,
-                width: double.infinity,
-                child: Container(
-                  height: SizeConfig.Height * 0.9,
-                  child: ListView.builder(
-                      itemCount: c.allOrderList?.value.data.length,
-                      itemBuilder: (context, index) {
-                        if (c.allOrderList!.value.data[index].status <5 && c.allOrderList!.value.data[index].cancelStatus==0) {
-                          final list=c.allOrderList!.value.data[index];
-                          return SizedBox(
-                            width: SizeConfig.Width * 1,
-                            child: orderCard(() {
-                              Get.to(OrderStatus());
-                            }, list.status<5 && list.driverAcceptStatus==1,list.orderItems[0].quantity,
-                                list.orderItems[0].item,
-                                list.orderItems[0].price,
-                                list.orderItems[0].image,list.orderPrice,list.createdAt,list.id,list.status<5 && list.status==4),
-                          ).paddingOnly(left: 18.0, right: 18.0);
-                        }
-                        else {
-                          return SizedBox.shrink();
-                        }
-                      }),
+    return GetBuilder<OrderController>(
+        builder: (c) => controller.isLoading.value
+            ? const Center(child: CircularProgressIndicator())
+            : Scaffold(
+                body: SafeArea(
+                  child: GetBuilder<OrderController>(builder: (c) {
+                    return Container(
+                      height: SizeConfig.Height * 0.9,
+                      width: double.infinity,
+                      child: Container(
+                        height: SizeConfig.Height * 0.9,
+                        child: ListView.builder(
+                            itemCount: c.activeList.length,
+                            itemBuilder: (context, index) {
+                              //  if (c.allOrderList!.value.data[index].status <5 && c.allOrderList!.value.data[index].cancelStatus==0) {
+                              final list = c.activeList[index];
+                              return SizedBox(
+                                width: SizeConfig.Width * 1,
+                                child: orderCard(() {
+                                  Get.to(OrderStatus(
+                                    list: list,
+                                  ));
+                                },
+                                    list.status < 5 &&
+                                        list.driverAcceptStatus == 1,
+                                    list.orderItems[0].quantity,
+                                    list.orderItems[0].item,
+                                    list.orderItems[0].price,
+                                    list.orderItems[0].image,
+                                    list.totalCost.toStringAsFixed(2),
+                                    list.createdAt,
+                                    list.id,
+                                    list.status < 5 && list.status == 4,
+                                    list),
+                              ).paddingOnly(left: 18.0, right: 18.0);
+                              //  }
+                              // else {
+                              //   return SizedBox.shrink();
+                              // }
+                            }),
+                      ),
+                    );
+                  }),
                 ),
-              );
-            }
-            else{
-              return Container();
-            }
-          }
-        ),
-      ),
-    );
+              ));
   }
 }

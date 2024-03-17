@@ -4,6 +4,7 @@ import 'package:dotted_border/dotted_border.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hello_dish_driver/screens/authentication/signup/controller/signUpController.dart';
 import 'package:hello_dish_driver/utils/AppColors.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -12,12 +13,14 @@ class AddFileCard extends StatefulWidget {
   final bool forCamera;
   final ValueChanged<bool>? onChanged;
   final ValueChanged<File>? file;
+  final File selectedFile;
   const AddFileCard(
       {super.key,
       required this.title,
       this.onChanged,
       required this.forCamera,
-      required this.file});
+      required this.file,
+      required this.selectedFile});
 
   @override
   State<AddFileCard> createState() => _AddFileCardState();
@@ -27,14 +30,12 @@ class _AddFileCardState extends State<AddFileCard> {
   File? _image;
 
   Future<void> _pickFile() async {
-    FilePickerResult? result =
-        await FilePicker.platform.pickFiles(type: FileType.image);
-
-    if (result != null) {
-      List<File> files = result.files.map((file) => File(file.path!)).toList();
-
+    final XFile? pickedFile = await ImagePicker().pickImage(
+      source: ImageSource.gallery,
+    );
+    if (pickedFile != null) {
       setState(() {
-        _image = files[0];
+        _image = File(pickedFile.path);
         widget.file!(_image!);
       });
     }
@@ -70,13 +71,21 @@ class _AddFileCardState extends State<AddFileCard> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   if (_image == null)
-                    Text(
-                      widget.title,
-                      style: GoogleFonts.poppins(
-                          fontWeight: FontWeight.w500,
-                          fontSize: 12,
-                          color: AppColors.redGradient),
-                    ),
+                    widget.selectedFile == null
+                        ? Text(
+                            widget.title,
+                            style: GoogleFonts.poppins(
+                                fontWeight: FontWeight.w500,
+                                fontSize: 12,
+                                color: AppColors.redGradient),
+                          )
+                        : Container(
+                            height: 70,
+                            child: Image.file(
+                              widget.selectedFile,
+                              fit: BoxFit.contain,
+                            ),
+                          ),
                   if (_image != null)
                     Container(
                       height: 70,

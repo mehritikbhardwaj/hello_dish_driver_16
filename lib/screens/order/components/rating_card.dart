@@ -4,7 +4,9 @@ import 'package:hello_dish_driver/utils/AppColors.dart';
 import 'package:hello_dish_driver/utils/sizedBox.dart';
 
 class YourRating extends StatelessWidget {
-  const YourRating({super.key});
+  final double rating;
+  final String ratingText;
+  const YourRating({super.key, required this.rating, required this.ratingText});
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +21,7 @@ class YourRating extends StatelessWidget {
                   fontWeight: FontWeight.w500, color: AppColors.textBlack),
             ),
             Container(
-              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(26),
                   color: Color(0xffefe5db),
@@ -28,11 +30,12 @@ class YourRating extends StatelessWidget {
                 children: [
                   Icon(
                     Icons.star,
+                    size: 18,
                     color: Color(0xfff3b053),
                   ),
                   boxB1(),
                   Text(
-                    '4.3',
+                    rating.toString(),
                     style: GoogleFonts.poppins(
                         fontWeight: FontWeight.w400,
                         color: AppColors.textBlack),
@@ -43,18 +46,20 @@ class YourRating extends StatelessWidget {
           ],
         ),
         boxA3(),
-        Container(
-          width: double.infinity,
-          padding: EdgeInsets.symmetric(vertical: 12, horizontal: 12),
-          decoration: BoxDecoration(
-              border: Border.all(color: AppColors.textBlack, width: 0.5),
-              borderRadius: BorderRadius.circular(20)),
-          child: Text(
-            'Driver behaviour is good',
-            style: GoogleFonts.poppins(
-                fontWeight: FontWeight.w400, color: Colors.grey),
-          ),
-        )
+        ratingText == ""
+            ? Text("")
+            : Container(
+                width: double.infinity,
+                padding: EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+                decoration: BoxDecoration(
+                    border: Border.all(color: AppColors.textBlack, width: 0.5),
+                    borderRadius: BorderRadius.circular(20)),
+                child: Text(
+                  ratingText,
+                  style: GoogleFonts.poppins(
+                      fontWeight: FontWeight.w400, color: Colors.grey),
+                ),
+              )
       ],
     );
   }

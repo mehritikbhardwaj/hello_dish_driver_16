@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hello_dish_driver/screens/Wallet/model/walletResposeModel.dart';
 import 'package:hello_dish_driver/screens/authentication/signup/model/bankDetailModel.dart';
+import 'package:hello_dish_driver/screens/home/model/activeOrdersModel.dart';
 import 'package:hello_dish_driver/screens/home/model/profileRespose.dart';
 import 'package:hello_dish_driver/utils/shared_pref..dart';
 import 'package:http/http.dart' as http;
@@ -17,6 +18,7 @@ import 'package:http_parser/http_parser.dart';
 import 'package:path/path.dart' as fileUtil;
 
 import '../../screens/home/model/allModel.dart';
+import '../../screens/order/model/cancelModel.dart';
 import '../../screens/order/model/orderModel.dart';
 
 typedef OnDownloadProgressCallback = void Function(
@@ -39,7 +41,7 @@ class HTTPClient {
     Get.log(
         "-------------------------------------------- PARAMETERS --------------------------------------------");
     Get.log("params: $params");
-    var token = SharedPref.shared.pref!.getString(PrefKeys.token)??'';
+    var token = SharedPref.shared.pref!.getString(PrefKeys.token) ?? '';
     Get.log("token: $token");
 
     res = await http
@@ -478,6 +480,7 @@ class HTTPClient {
 
     return profileResponseFromJson(res.body);
   }
+
   static Future<AllOrder> getAllOrders(
     String api,
   ) async {
@@ -501,6 +504,55 @@ class HTTPClient {
 
     return allOrderFromJson(res.body);
   }
+
+  static Future<ActiveOrdersModel> getCurrentActiveOrders(
+    String api,
+  ) async {
+    final url = Uri.parse(api);
+    var token = SharedPref.shared.pref!.getString(PrefKeys.token) ?? "";
+    log(api.toString() + " " + "BASE URL");
+
+    final http.Response res;
+    res = await http.get(url, headers: {
+      'Authorization': 'Bearer $token',
+    });
+    log(res.body.toString() + "ORDER RES");
+
+    if (res.statusCode == 200) {
+      //  print(await res.stream.bytesToString());
+    } else {
+      print(res.reasonPhrase);
+      var response = json.decode(res.body);
+      // Utils.showAlertDialog(response["message"]);
+    }
+
+    return activeOrdersModelFromJson(res.body);
+  }
+
+  static Future<CancelModel> getCancelOrders(
+    String api,
+  ) async {
+    final url = Uri.parse(api);
+    var token = SharedPref.shared.pref!.getString(PrefKeys.token) ?? "";
+    print(token);
+
+    final http.Response res;
+    res = await http.get(url, headers: {
+      'Authorization': 'Bearer $token',
+    });
+    log(res.body.toString() + "PROFILE RES");
+
+    if (res.statusCode == 200) {
+      //  print(await res.stream.bytesToString());
+    } else {
+      print(res.reasonPhrase);
+      var response = json.decode(res.body);
+      // Utils.showAlertDialog(response["message"]);
+    }
+
+    return cancelModelFromJson(res.body);
+  }
+
   static Future<HomeAllOrder> getHomeAllOrders(
     String api,
   ) async {
@@ -524,18 +576,19 @@ class HTTPClient {
 
     return homeAllOrderFromJson(res.body);
   }
-static Future getCollectOrder(
+
+  static Future getCollectOrder(
     String api,
   ) async {
     final url = Uri.parse(api);
     var token = SharedPref.shared.pref!.getString(PrefKeys.token) ?? "";
-    print(token);
+    print(api + "API HIT");
 
     final http.Response res;
     res = await http.put(url, headers: {
       'Authorization': 'Bearer $token',
     });
-    log(res.body.toString() + "PROFILE RES");
+    log(res.body.toString() + "UPDATE ORDER RES");
 
     if (res.statusCode == 200) {
       //  print(await res.stream.bytesToString());
@@ -544,7 +597,27 @@ static Future getCollectOrder(
       var response = json.decode(res.body);
       // Utils.showAlertDialog(response["message"]);
     }
-
   }
 
+  static Future deleteORder(
+    String api,
+  ) async {
+    final url = Uri.parse(api);
+    var token = SharedPref.shared.pref!.getString(PrefKeys.token) ?? "";
+    print(api + "API HIT");
+
+    final http.Response res;
+    res = await http.get(url, headers: {
+      'Authorization': 'Bearer $token',
+    });
+    log(res.body.toString() + "UPDATE ORDER RES");
+
+    if (res.statusCode == 200) {
+      //  print(await res.stream.bytesToString());
+    } else {
+      print(res.reasonPhrase);
+      var response = json.decode(res.body);
+      // Utils.showAlertDialog(response["message"]);
+    }
+  }
 }

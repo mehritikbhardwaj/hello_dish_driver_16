@@ -1,26 +1,26 @@
 // To parse this JSON data, do
 //
-//     final allOrder = allOrderFromJson(jsonString);
+//     final cancelModel = cancelModelFromJson(jsonString);
 
 import 'dart:convert';
 
-AllOrder allOrderFromJson(String str) => AllOrder.fromJson(json.decode(str));
+CancelModel cancelModelFromJson(String str) =>
+    CancelModel.fromJson(json.decode(str));
 
-String allOrderToJson(AllOrder data) => json.encode(data.toJson());
+String cancelModelToJson(CancelModel data) => json.encode(data.toJson());
 
-class AllOrder {
+class CancelModel {
   bool status;
-  List<DatumOrders> data;
+  List<Datum> data;
 
-  AllOrder({
+  CancelModel({
     required this.status,
     required this.data,
   });
 
-  factory AllOrder.fromJson(Map<String, dynamic> json) => AllOrder(
+  factory CancelModel.fromJson(Map<String, dynamic> json) => CancelModel(
         status: json["status"],
-        data: List<DatumOrders>.from(
-            json["data"].map((x) => DatumOrders.fromJson(x))),
+        data: List<Datum>.from(json["data"].map((x) => Datum.fromJson(x))),
       );
 
   Map<String, dynamic> toJson() => {
@@ -29,130 +29,74 @@ class AllOrder {
       };
 }
 
-class DatumOrders {
-  Location location;
+class Datum {
   String id;
   RestaurantId restaurantId;
   CustomerId customerId;
   CustomerLocationId customerLocationId;
   DriverId driverId;
-  String offer;
+  String orderId;
   List<OrderItem> orderItems;
-  int orderPrice;
+  double orderPrice;
   String paymentType;
   int foodPrepStatus;
-  int driverAcceptStatus;
-  int cancelStatus;
   int status;
-  int discountAmount;
-  double deliveryCharge;
-  double gstCharge;
-  double totalCost;
-  int packingCharge;
-  double lat;
-  double long;
-  int restaurnatRating;
-  int driverRating;
-  int rejectByRestaurant;
-  int adminPaidToRestaurant;
-  int adminPaidToDriver;
+  int cancelStatus;
   DateTime createdAt;
   DateTime updatedAt;
   int v;
 
-  DatumOrders({
-    required this.location,
+  Datum({
     required this.id,
     required this.restaurantId,
     required this.customerId,
     required this.customerLocationId,
     required this.driverId,
-    required this.offer,
+    required this.orderId,
     required this.orderItems,
     required this.orderPrice,
     required this.paymentType,
     required this.foodPrepStatus,
-    required this.driverAcceptStatus,
-    required this.cancelStatus,
     required this.status,
-    required this.discountAmount,
-    required this.deliveryCharge,
-    required this.gstCharge,
-    required this.totalCost,
-    required this.packingCharge,
-    required this.lat,
-    required this.long,
-    required this.restaurnatRating,
-    required this.driverRating,
-    required this.rejectByRestaurant,
-    required this.adminPaidToRestaurant,
-    required this.adminPaidToDriver,
+    required this.cancelStatus,
     required this.createdAt,
     required this.updatedAt,
     required this.v,
   });
 
-  factory DatumOrders.fromJson(Map<String, dynamic> json) => DatumOrders(
-        location: Location.fromJson(json["location"]),
+  factory Datum.fromJson(Map<String, dynamic> json) => Datum(
         id: json["_id"],
         restaurantId: RestaurantId.fromJson(json["restaurantId"]),
         customerId: CustomerId.fromJson(json["customerId"]),
         customerLocationId:
             CustomerLocationId.fromJson(json["customerLocationId"]),
-        driverId: DriverId.fromJson(json["driverId"] ?? ''),
-        offer: json["offer"],
+        driverId: DriverId.fromJson(json["driverId"]),
+        orderId: json["orderId"],
         orderItems: List<OrderItem>.from(
             json["orderItems"].map((x) => OrderItem.fromJson(x))),
-        orderPrice: json["orderPrice"],
+        orderPrice: json["orderPrice"].toDouble(),
         paymentType: json["paymentType"],
         foodPrepStatus: json["foodPrepStatus"],
-        driverAcceptStatus: json["driverAcceptStatus"],
-        cancelStatus: json["cancelStatus"],
         status: json["status"],
-        discountAmount: json["discountAmount"],
-        deliveryCharge: json["deliveryCharge"].toDouble(),
-        gstCharge: json["gstCharge"].toDouble(),
-        totalCost: json["totalCost"].toDouble(),
-        packingCharge: json["packingCharge"],
-        lat: json["lat"]?.toDouble(),
-        long: json["long"]?.toDouble(),
-        restaurnatRating: json["restaurnatRating"],
-        driverRating: json["driverRating"],
-        rejectByRestaurant: json["rejectByRestaurant"],
-        adminPaidToRestaurant: json["adminPaidToRestaurant"],
-        adminPaidToDriver: json["adminPaidToDriver"],
+        cancelStatus: json["cancelStatus"],
         createdAt: DateTime.parse(json["createdAt"]),
         updatedAt: DateTime.parse(json["updatedAt"]),
         v: json["__v"],
       );
 
   Map<String, dynamic> toJson() => {
-        "location": location.toJson(),
         "_id": id,
         "restaurantId": restaurantId.toJson(),
         "customerId": customerId.toJson(),
         "customerLocationId": customerLocationId.toJson(),
         "driverId": driverId.toJson(),
-        "offer": offer,
+        "orderId": orderId,
         "orderItems": List<dynamic>.from(orderItems.map((x) => x.toJson())),
         "orderPrice": orderPrice,
         "paymentType": paymentType,
         "foodPrepStatus": foodPrepStatus,
-        "driverAcceptStatus": driverAcceptStatus,
-        "cancelStatus": cancelStatus,
         "status": status,
-        "discountAmount": discountAmount,
-        "deliveryCharge": deliveryCharge,
-        "gstCharge": gstCharge.toDouble(),
-        "totalCost": totalCost,
-        "packingCharge": packingCharge,
-        "lat": lat,
-        "long": long,
-        "restaurnatRating": restaurnatRating,
-        "driverRating": driverRating,
-        "rejectByRestaurant": rejectByRestaurant,
-        "adminPaidToRestaurant": adminPaidToRestaurant,
-        "adminPaidToDriver": adminPaidToDriver,
+        "cancelStatus": cancelStatus,
         "createdAt": createdAt.toIso8601String(),
         "updatedAt": updatedAt.toIso8601String(),
         "__v": v,
@@ -281,8 +225,6 @@ class CustomerLocationId {
 }
 
 class DriverId {
-  String tshirtSize;
-  String transactionId;
   String id;
   String name;
   String phone;
@@ -304,10 +246,11 @@ class DriverId {
   DateTime createdAt;
   DateTime updatedAt;
   int v;
+  String transactionId;
+  String tshirtSize;
+  String uniqueId;
 
   DriverId({
-    required this.tshirtSize,
-    required this.transactionId,
     required this.id,
     required this.name,
     required this.phone,
@@ -329,11 +272,12 @@ class DriverId {
     required this.createdAt,
     required this.updatedAt,
     required this.v,
+    required this.transactionId,
+    required this.tshirtSize,
+    required this.uniqueId,
   });
 
   factory DriverId.fromJson(Map<String, dynamic> json) => DriverId(
-        tshirtSize: json["tshirtSize"],
-        transactionId: json["transactionId"],
         id: json["_id"],
         name: json["name"],
         phone: json["phone"],
@@ -355,11 +299,12 @@ class DriverId {
         createdAt: DateTime.parse(json["createdAt"]),
         updatedAt: DateTime.parse(json["updatedAt"]),
         v: json["__v"],
+        transactionId: json["transactionId"],
+        tshirtSize: json["tshirtSize"],
+        uniqueId: json["uniqueId"],
       );
 
   Map<String, dynamic> toJson() => {
-        "tshirtSize": tshirtSize,
-        "transactionId": transactionId,
         "_id": id,
         "name": name,
         "phone": phone,
@@ -381,27 +326,9 @@ class DriverId {
         "createdAt": createdAt.toIso8601String(),
         "updatedAt": updatedAt.toIso8601String(),
         "__v": v,
-      };
-}
-
-class Location {
-  String type;
-  List<double> coordinates;
-
-  Location({
-    required this.type,
-    required this.coordinates,
-  });
-
-  factory Location.fromJson(Map<String, dynamic> json) => Location(
-        type: json["type"],
-        coordinates:
-            List<double>.from(json["coordinates"].map((x) => x?.toDouble())),
-      );
-
-  Map<String, dynamic> toJson() => {
-        "type": type,
-        "coordinates": List<dynamic>.from(coordinates.map((x) => x)),
+        "transactionId": transactionId,
+        "tshirtSize": tshirtSize,
+        "uniqueId": uniqueId,
       };
 }
 

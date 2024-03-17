@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -6,6 +7,7 @@ import 'package:hello_dish_driver/screens/Wallet/model/walletResposeModel.dart';
 import 'package:hello_dish_driver/utils/api_manager/apis.dart';
 import 'package:hello_dish_driver/utils/api_manager/http_client.dart';
 import 'package:hello_dish_driver/utils/shared_pref..dart';
+import 'package:hello_dish_driver/utils/utils.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 
 class WalletController extends GetxController {
@@ -36,6 +38,8 @@ class WalletController extends GetxController {
       transList.clear();
       transList.addAll(response!.value.data);
     } catch (stacktrace, error) {
+      log(stacktrace.toString());
+      log(error.toString());
       isLoading.value = false;
       update();
     }
@@ -82,6 +86,7 @@ class WalletController extends GetxController {
 
   void _handlePaymentSuccess(PaymentSuccessResponse response) {
     print("SUCCESS: " + "${response.paymentId}");
+    addWithdrawWallet(false);
     update();
   }
 
@@ -93,5 +98,32 @@ class WalletController extends GetxController {
     print("EXTERNAL_WALLET: " + "${response.walletName}");
   }
 
+  addWithdrawWallet(bool forWithdraw) async {
+    isLoading = true.obs;
+    update();
+
+    final params = {
+      "amount": int.parse(addAmountTextController.text),
+      "type": forWithdraw ? 0 : 1
+    };
+    print(params.toString());
+
+    final res = await HTTPClient.postRequest(APIs.paymentWithdrawAdd, params);
+    if (res["status"]) {
+      Utils.showAlertDialog(forWithdraw
+          ? "Amount withdrawl successful"
+          : "Amount added to wallet successfully");
+    } else {
+      Utils.showAlertDialog("Something went wrong");
+    }
+
+    amountTextFieldAddVisible = false;
+    amountTextFieldWithdrawVisible = false;
+    addAmountTextController.text = "";
+    getTransList();
+
+    isLoading = false.obs;
+    update();
+  }
   //
 }

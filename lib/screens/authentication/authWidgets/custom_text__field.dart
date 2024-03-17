@@ -13,6 +13,7 @@ class DCustomTextField extends StatefulWidget {
   final bool readOnly;
   final int? maxLength;
   final TextInputType keyboardType;
+  final TextCapitalization? textCapitalization;
   final TextInputAction textInputAction;
   final Function()? onIconTap;
   final Function()? onTap;
@@ -34,6 +35,7 @@ class DCustomTextField extends StatefulWidget {
     this.onTap,
     this.onIconTap,
     this.validator,
+    this.textCapitalization,
   });
 
   @override
@@ -57,11 +59,14 @@ class _CustomTextFieldState extends State<DCustomTextField> {
         maxLength: widget.maxLength,
         keyboardType: widget.keyboardType,
         textInputAction: widget.textInputAction,
+        textCapitalization:
+            widget.textCapitalization ?? TextCapitalization.words,
         onTap: widget.onTap,
         validator: widget.validator,
         decoration: InputDecoration(
           fillColor: Colors.white,
           filled: true,
+          counterText: '',
           contentPadding:
               const EdgeInsets.symmetric(horizontal: 18, vertical: 5),
           labelStyle: GoogleFonts.poppins(

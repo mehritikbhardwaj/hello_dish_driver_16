@@ -28,6 +28,50 @@ class Utils {
     // ).show(context);
   }
 
+  static String getMonthName(int month) {
+    switch (month) {
+      case 1:
+        return 'Jan';
+      case 2:
+        return 'Feb';
+      case 3:
+        return 'Mar';
+      case 4:
+        return 'Apr';
+      case 5:
+        return 'May';
+      case 6:
+        return 'Jun';
+      case 7:
+        return 'Jul';
+      case 8:
+        return 'Aug';
+      case 9:
+        return 'Sep';
+      case 10:
+        return 'Oct';
+      case 11:
+        return 'Nov';
+      case 12:
+        return 'Dec';
+      default:
+        return '';
+    }
+  }
+
+  static String convertTimestamp(String timestamp) {
+    DateTime dateTime = DateTime.parse(timestamp).toLocal();
+
+    String day = dateTime.day.toString();
+    String month = getMonthName(dateTime.month);
+    String year = dateTime.year.toString();
+    String hour = (dateTime.hour % 12).toString().padLeft(2, '0');
+    String minute = dateTime.minute.toString().padLeft(2, '0');
+    String period = dateTime.hour < 12 ? 'AM' : 'PM';
+
+    return '$day $month $year at $hour:$minute $period';
+  }
+
   static showAlertDialog(String midleText) {
     Get.rawSnackbar(
       title: midleText,

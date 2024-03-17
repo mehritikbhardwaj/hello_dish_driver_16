@@ -1,9 +1,11 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+import 'package:hello_dish_driver/screens/home/model/activeOrdersModel.dart';
 import 'package:hello_dish_driver/screens/home/model/profileRespose.dart';
 import 'package:hello_dish_driver/utils/api_manager/apis.dart';
 import 'package:hello_dish_driver/utils/api_manager/http_client.dart';
@@ -17,6 +19,8 @@ class HomeController extends GetxController {
   RxString area = "".obs;
   RxBool isLoading = false.obs;
   Rx<ProfileResponse>? profileResponse;
+  Rx<ActiveOrdersModel>? ordersResponse;
+  var ordersList = <DatumOrderActive>[].obs;
 
   RxBool restaurantStatus = false.obs;
 
@@ -108,16 +112,55 @@ class HomeController extends GetxController {
     } catch (stacktrace) {
       print(stacktrace.toString());
     }
+
     isLoading.value = false;
     update();
+  }
+
+  getCurrentActiveOrder() async {
+    try {
+      final res = await HTTPClient.getCurrentActiveOrders(APIs.allOrder);
+      ordersList.clear();
+      ordersResponse = res.obs;
+      for (int i = 0; i < ordersResponse!.value.data.length; i++) {
+        ordersList.add(ordersResponse!.value.data[i]);
+      }
+
+      print(ordersResponse!.value.data.length.toString() + "RES LENGHT");
+    } catch (stacktrace, error) {
+      log(stacktrace.toString());
+      log(error.toString());
+    }
+    isLoading.value = false;
+    update();
+  }
+
+  getCollectOrder(id, type) async {
+    isLoading = true.obs;
+    update();
+    await HTTPClient.getCollectOrder(
+        APIs.collectOrder + '/' + id.toString() + '/' + type.toString());
+    getCurrentActiveOrder();
+    isLoading = false.obs;
+    update();
+  }
+
+  rejectAndCancelOrder(id, type) async {
+    await HTTPClient.deleteORder(APIs.rejectAndCancelOrder +
+        '/' +
+        id.toString() +
+        '/' +
+        type.toString());
+    await getCurrentActiveOrder();
   }
 
   updateOnlineStatus() async {
     isLoading = true.obs;
     update();
+    restaurantStatus.value = profileResponse!.value.user.onlineOffline == 1;
 
     final params = {
-      "onlineOffline": restaurantStatus.value ? "1" : "0",
+      "onlineOffline": !restaurantStatus.value ? "1" : "0",
     };
     //Get.offAll(const DashboardScreen());
     print(params.toString());
@@ -128,5 +171,25 @@ class HomeController extends GetxController {
 
     isLoading = false.obs;
     update();
+  }
+
+  updateLatLng() async {
+    // isLoading = true.obs;
+    // update();
+
+    final params = {
+      "lat": double.parse(latitude.value),
+      "long": double.parse(longitude.value)
+    };
+    //Get.offAll(const DashboardScreen());
+    print(params.toString());
+
+    final res = await HTTPClient.putRequest(APIs.updateProfile, params);
+    // getCurrentActiveOrder();
+
+    // getProfileResponse();
+
+    // isLoading = false.obs;
+    // update();
   }
 }

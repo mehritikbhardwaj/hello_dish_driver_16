@@ -32,6 +32,7 @@ class UploadApi {
       }
     } catch (e, stacktrace) {
       print(stacktrace.toString());
+      print(e.toString());
 
       return 'Exception occurred while uploading image: $e';
     }

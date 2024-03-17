@@ -185,7 +185,7 @@ class _ProfileCardState extends State<ProfileCard> {
                     ),
                   ],
                 ),
-                padding: EdgeInsets.symmetric(horizontal: 18, vertical: 18),
+                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 18),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -240,7 +240,7 @@ class _ProfileCardState extends State<ProfileCard> {
                     ),
                   ],
                 ),
-                padding: EdgeInsets.symmetric(horizontal: 18, vertical: 18),
+                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 18),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [

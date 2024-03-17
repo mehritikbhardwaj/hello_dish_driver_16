@@ -5,6 +5,7 @@ import 'package:hello_dish_driver/screens/Wallet/ui/components/order_card.dart';
 import 'package:hello_dish_driver/screens/Wallet/ui/components/withdraw_widget.dart';
 import 'package:hello_dish_driver/utils/AppColors.dart';
 import 'package:hello_dish_driver/utils/sizedBox.dart';
+import 'package:hello_dish_driver/utils/utils.dart';
 import 'package:iconsax/iconsax.dart';
 
 import 'controller/wallet_controller.dart';
@@ -46,213 +47,254 @@ class _WalletScreenState extends State<WalletScreen> {
               ? Center(
                   child: CircularProgressIndicator(),
                 )
-              : Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Total Balance',
-                      style: GoogleFonts.poppins(color: AppColors.grey),
-                    ),
-                    Row(
-                      children: [
-                        Text(
-                          "₹ ",
-                          style: GoogleFonts.nunito(fontSize: 36.0),
-                        ),
-                        Text(
-                          walletController.response!.value.driverWallet.total
-                              .toString(),
-                          style: GoogleFonts.poppins(fontSize: 36.0),
-                        ),
-                      ],
-                    ),
-                    walletController.amountTextFieldAddVisible ||
-                            walletController.amountTextFieldWithdrawVisible
-                        ? Row(
-                            children: [
-                              Expanded(
-                                flex: 6,
-                                child: TextFormField(
-                                  controller:
-                                      walletController.addAmountTextController,
-                                  keyboardType: TextInputType.number,
-                                  decoration: InputDecoration(
-                                    labelText: "Add 💸".tr,
-                                    prefixIcon: const Icon(
-                                      Iconsax.wallet,
-                                      size: 20.0,
+              : SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Total Balance',
+                        style: GoogleFonts.poppins(color: AppColors.grey),
+                      ),
+                      Row(
+                        children: [
+                          Text(
+                            "₹ ",
+                            style: GoogleFonts.nunito(fontSize: 36.0),
+                          ),
+                          Text(
+                            walletController.response!.value.driverWallet.total
+                                .toStringAsFixed(2),
+                            style: GoogleFonts.poppins(fontSize: 36.0),
+                          ),
+                        ],
+                      ),
+                      walletController.amountTextFieldAddVisible ||
+                              walletController.amountTextFieldWithdrawVisible
+                          ? Row(
+                              children: [
+                                Expanded(
+                                  flex: 6,
+                                  child: TextFormField(
+                                    controller: walletController
+                                        .addAmountTextController,
+                                    keyboardType: TextInputType.number,
+                                    decoration: InputDecoration(
+                                      labelText: "Add 💸".tr,
+                                      prefixIcon: const Icon(
+                                        Iconsax.wallet,
+                                        size: 20.0,
+                                      ),
                                     ),
-                                  ),
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return 'Number can`t be empty'.tr;
-                                    }
-                                    // else if (value.length < 10) {
-                                    //   return 'Number should be 10 digit'.tr;
-                                    // }
-                                    else {
-                                      return null;
-                                    }
-                                  },
-                                ),
-                              ),
-                              Expanded(
-                                flex: 1,
-                                child: GestureDetector(
-                                    onTap: () {
-                                      walletController
-                                          .amountTextFieldAddVisible = false;
-                                      walletController
-                                              .amountTextFieldWithdrawVisible =
-                                          false;
-                                      walletController.addAmountTextController
-                                          .clear();
-
-                                      walletController.update();
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Number can`t be empty'.tr;
+                                      }
+                                      // else if (value.length < 10) {
+                                      //   return 'Number should be 10 digit'.tr;
+                                      // }
+                                      else {
+                                        return null;
+                                      }
                                     },
-                                    child:
-                                        const Icon(Icons.close)), //wallet_add
-                              )
+                                  ),
+                                ),
+                                Expanded(
+                                  flex: 1,
+                                  child: GestureDetector(
+                                      onTap: () {
+                                        walletController
+                                            .amountTextFieldAddVisible = false;
+                                        walletController
+                                                .amountTextFieldWithdrawVisible =
+                                            false;
+                                        walletController.addAmountTextController
+                                            .clear();
+
+                                        walletController.update();
+                                      },
+                                      child:
+                                          const Icon(Icons.close)), //wallet_add
+                                )
+                              ],
+                            ).paddingOnly(top: 18.0)
+                          : Container(),
+                      boxA1(),
+                      Row(
+                        children: [
+                          Expanded(
+                            flex: 6,
+                            child: ElevatedButton(
+                                style: walletController
+                                        .amountTextFieldAddVisible
+                                    ? ButtonStyle(
+                                        foregroundColor:
+                                            const MaterialStatePropertyAll(
+                                                AppColors.white),
+                                        backgroundColor:
+                                            const MaterialStatePropertyAll(
+                                                AppColors.theme),
+                                        shape: MaterialStatePropertyAll(
+                                          RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(100.0),
+                                            side: const BorderSide(
+                                                color: AppColors.white),
+                                          ),
+                                        ))
+                                    : ButtonStyle(
+                                        foregroundColor:
+                                            const MaterialStatePropertyAll(
+                                                AppColors.grey),
+                                        backgroundColor:
+                                            const MaterialStatePropertyAll(
+                                                AppColors.backgroundBlueColour),
+                                        shape: MaterialStatePropertyAll(
+                                          RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(100.0),
+                                            side: const BorderSide(
+                                                color: AppColors.grey),
+                                          ),
+                                        )),
+                                onPressed: () async {
+                                  if (walletController
+                                      .amountTextFieldAddVisible) {
+                                    walletController.openCheckout();
+                                  }
+                                  walletController.amountTextFieldAddVisible =
+                                      true;
+                                  walletController
+                                      .amountTextFieldWithdrawVisible = false;
+                                  walletController.update();
+                                },
+                                child: const Text("Add")),
+                          ),
+                          const Spacer(),
+                          Expanded(
+                            flex: 6,
+                            child: ElevatedButton(
+                                style: walletController
+                                        .amountTextFieldWithdrawVisible
+                                    ? ButtonStyle(
+                                        foregroundColor:
+                                            const MaterialStatePropertyAll(
+                                                AppColors.white),
+                                        backgroundColor:
+                                            const MaterialStatePropertyAll(
+                                                AppColors.theme),
+                                        shape: MaterialStatePropertyAll(
+                                          RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(100.0),
+                                            side: const BorderSide(
+                                                color: AppColors.white),
+                                          ),
+                                        ))
+                                    : ButtonStyle(
+                                        foregroundColor:
+                                            const MaterialStatePropertyAll(
+                                                AppColors.grey),
+                                        backgroundColor:
+                                            const MaterialStatePropertyAll(
+                                                AppColors.backgroundBlueColour),
+                                        shape: MaterialStatePropertyAll(
+                                          RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(100.0),
+                                            side: const BorderSide(
+                                                color: AppColors.grey),
+                                          ),
+                                        )),
+                                onPressed: () async {
+                                  if (walletController
+                                      .amountTextFieldWithdrawVisible) {
+                                    if (walletController.response!.value
+                                            .driverWallet.total >
+                                        int.parse(walletController
+                                            .addAmountTextController.text)) {
+                                      if (int.parse(walletController
+                                              .addAmountTextController.text) <
+                                          100) {
+                                        Utils.showFlushBarWithMessage(
+                                            "Please enter amout greater than 100",
+                                            context,
+                                            true);
+                                      } else {
+                                        walletController
+                                            .addWithdrawWallet(true);
+                                      }
+                                    }
+                                  }
+                                  walletController
+                                      .amountTextFieldWithdrawVisible = true;
+                                  walletController.amountTextFieldAddVisible =
+                                      false;
+
+                                  walletController.update();
+                                },
+                                child: const Text("Withdraw ")),
+                          ),
+                        ],
+                      ),
+                      boxA2(),
+                      Row(
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Latest',
+                                style:
+                                    GoogleFonts.poppins(color: AppColors.grey),
+                              ),
+                              Text(
+                                'Transaction',
+                                style: GoogleFonts.poppins(fontSize: 24.0),
+                              ),
                             ],
-                          ).paddingOnly(top: 18.0)
-                        : Container(),
-                    boxA1(),
-                    Row(
-                      children: [
-                        Expanded(
-                          flex: 6,
-                          child: ElevatedButton(
-                              style: walletController.amountTextFieldAddVisible
-                                  ? ButtonStyle(
-                                      foregroundColor:
-                                          const MaterialStatePropertyAll(
-                                              AppColors.white),
-                                      backgroundColor:
-                                          const MaterialStatePropertyAll(
-                                              AppColors.theme),
-                                      shape: MaterialStatePropertyAll(
-                                        RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(100.0),
-                                          side: const BorderSide(
-                                              color: AppColors.white),
-                                        ),
-                                      ))
-                                  : ButtonStyle(
-                                      foregroundColor:
-                                          const MaterialStatePropertyAll(
-                                              AppColors.grey),
-                                      backgroundColor:
-                                          const MaterialStatePropertyAll(
-                                              AppColors.backgroundBlueColour),
-                                      shape: MaterialStatePropertyAll(
-                                        RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(100.0),
-                                          side: const BorderSide(
-                                              color: AppColors.grey),
-                                        ),
-                                      )),
-                              onPressed: () async {
-                                walletController.amountTextFieldAddVisible =
-                                    true;
-                                walletController
-                                    .amountTextFieldWithdrawVisible = false;
-
-                                walletController.update();
-                              },
-                              child: const Text("Add")),
+                          ),
+                          const Spacer(),
+                          // Text(
+                          //   'More',
+                          //   style: GoogleFonts.poppins(color: AppColors.grey),
+                          // ),
+                        ],
+                      ),
+                      boxA2(),
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.43,
+                        child: SingleChildScrollView(
+                          child: Column(
+                            children: [
+                              for (int i = 0;
+                                  i < walletController.transList.length;
+                                  i++)
+                                OrderCard(
+                                    type: walletController
+                                                .transList[i].orderId !=
+                                            ""
+                                        ? 'Order Income'
+                                        : walletController.transList[i].type ==
+                                                "1"
+                                            ? "Wallet loaded"
+                                            : "Wallet withdrawl",
+                                    price: '₹ ' +
+                                        walletController.transList[i].amount
+                                            .toStringAsFixed(2),
+                                    gain: walletController.transList[i].type ==
+                                            "1"
+                                        ? true
+                                        : false,
+                                    date: Utils.convertTimestamp(
+                                        walletController.transList[i].createdAt
+                                            .toString())),
+                            ],
+                          ),
                         ),
-                        const Spacer(),
-                        Expanded(
-                          flex: 6,
-                          child: ElevatedButton(
-                              style: walletController
-                                      .amountTextFieldWithdrawVisible
-                                  ? ButtonStyle(
-                                      foregroundColor:
-                                          const MaterialStatePropertyAll(
-                                              AppColors.white),
-                                      backgroundColor:
-                                          const MaterialStatePropertyAll(
-                                              AppColors.theme),
-                                      shape: MaterialStatePropertyAll(
-                                        RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(100.0),
-                                          side: const BorderSide(
-                                              color: AppColors.white),
-                                        ),
-                                      ))
-                                  : ButtonStyle(
-                                      foregroundColor:
-                                          const MaterialStatePropertyAll(
-                                              AppColors.grey),
-                                      backgroundColor:
-                                          const MaterialStatePropertyAll(
-                                              AppColors.backgroundBlueColour),
-                                      shape: MaterialStatePropertyAll(
-                                        RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(100.0),
-                                          side: const BorderSide(
-                                              color: AppColors.grey),
-                                        ),
-                                      )),
-                              onPressed: () async {
-                                walletController
-                                    .amountTextFieldWithdrawVisible = true;
-                                walletController.amountTextFieldAddVisible =
-                                    false;
-
-                                walletController.update();
-                              },
-                              child: const Text("Withdraw ")),
-                        ),
-                      ],
-                    ),
-                    boxA2(),
-                    Row(
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Latest',
-                              style: GoogleFonts.poppins(color: AppColors.grey),
-                            ),
-                            Text(
-                              'Transaction',
-                              style: GoogleFonts.poppins(fontSize: 24.0),
-                            ),
-                          ],
-                        ),
-                        const Spacer(),
-                        // Text(
-                        //   'More',
-                        //   style: GoogleFonts.poppins(color: AppColors.grey),
-                        // ),
-                      ],
-                    ),
-                    boxA2(),
-                    //   for(int i=)
-                    const OrderCard(
-                        type: 'Order Income',
-                        price: '₹ 50.5',
-                        gain: true,
-                        date: '03 Feb 2023 at 11:07PM'),
-                    const OrderCard(
-                        type: 'Order Income',
-                        price: '₹ 100',
-                        gain: true,
-                        date: '03 Feb 2023 at 11:07PM'),
-                    const OrderCard(
-                        type: 'Buy TShirt',
-                        price: '- ₹ 100',
-                        gain: false,
-                        date: '03 Feb 2023 at 11:07PM'),
-                  ],
-                ).paddingAll(18.0),
+                      )
+                    ],
+                  ).paddingAll(18.0),
+                ),
         );
       },
     );

@@ -197,6 +197,15 @@ class SignupController extends GetxController {
       print(params3.toString());
     } catch (err) {}
 
+    try {
+      final params4 = {
+        "vehicleType": isElec ? "0" : "1",
+        "tshirtSize": size,
+        "transactionId": transactionId
+      };
+      print(params4.toString());
+    } catch (err) {}
+
     print(params.toString());
   }
 
@@ -318,7 +327,7 @@ class SignupController extends GetxController {
 
     if (validate()) {
       final params = {
-        Params.name: nameController.text,
+        Params.name: nameController.text.trim(),
         "email": emailController.text,
         "phone": numberController.text,
         Params.password: passwordController.text,
@@ -329,6 +338,7 @@ class SignupController extends GetxController {
                 ? "Female"
                 : "Other",
       };
+      print(params);
       final res = await HTTPClient.postRequest(APIs.signup, params);
       if (res["success"] == true) {
         SharedPref.shared.pref?.setInt(PrefKeys.isLoggedIn, 1);
@@ -354,6 +364,11 @@ class SignupController extends GetxController {
     if (nameController.text.isEmpty) {
       Utils.showFlushBarWithMessage("Name can't be empty", Get.context!, false);
       return false;
+    }
+    if (nameController.text.length < 3) {
+      Utils.showFlushBarWithMessage(
+          "Name can't be less than 3 characters", Get.context!, false);
+      return false;
     } else if (emailController.text.isEmpty || !emailController.text.isEmail) {
       Utils.showFlushBarWithMessage(
           "Email can't be empty or Invalid Email", Get.context!, false);
@@ -370,6 +385,10 @@ class SignupController extends GetxController {
     } else if (passwordController.text != confirmPasswordController.text) {
       Utils.showFlushBarWithMessage(
           "Password and confirm password should be same", Get.context!, false);
+      return false;
+    } else if (selectedDate == "Select date of birth") {
+      Utils.showFlushBarWithMessage(
+          "Please enter date of birth", Get.context!, false);
       return false;
     } else {
       return true;

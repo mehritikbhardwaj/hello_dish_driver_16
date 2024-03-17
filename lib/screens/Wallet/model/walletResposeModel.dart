@@ -37,8 +37,8 @@ class WalletResponse {
 class Datum {
   String id;
   String driverId;
-  // dynamic orderId;
-  int amount;
+  dynamic orderId;
+  double amount;
   String type;
   int active;
   String createdAt;
@@ -48,7 +48,7 @@ class Datum {
   Datum({
     required this.id,
     required this.driverId,
-    // required this.orderId,
+    required this.orderId,
     required this.amount,
     required this.type,
     required this.active,
@@ -60,8 +60,8 @@ class Datum {
   factory Datum.fromJson(Map<String, dynamic> json) => Datum(
         id: json["_id"],
         driverId: json["driverId"],
-        //   orderId: json["orderId"],
-        amount: json["amount"],
+        orderId: json["orderId"] ?? "",
+        amount: json["amount"].toDouble(),
         type: json["type"],
         active: json["active"],
         createdAt: json["createdAt"],
@@ -72,7 +72,7 @@ class Datum {
   Map<String, dynamic> toJson() => {
         "_id": id,
         "driverId": driverId,
-        //   "orderId": orderId,
+        "orderId": orderId,
         "amount": amount,
         "type": type,
         "active": active,
@@ -85,10 +85,10 @@ class Datum {
 class DriverWallet {
   String id;
   String driverId;
-  int total;
+  double total;
   int totalWithdrawal;
-  int totalEarn;
-  int totalAdd;
+  double totalEarn;
+  double totalAdd;
   int active;
   DateTime createdAt;
   DateTime updatedAt;
@@ -110,10 +110,10 @@ class DriverWallet {
   factory DriverWallet.fromJson(Map<String, dynamic> json) => DriverWallet(
         id: json["_id"],
         driverId: json["driverId"],
-        total: json["total"],
+        total: json["total"].toDouble(),
         totalWithdrawal: json["totalWithdrawal"],
-        totalEarn: json["totalEarn"],
-        totalAdd: json["totalAdd"],
+        totalEarn: json["totalEarn"].toDouble(),
+        totalAdd: json["totalAdd"].toDouble(),
         active: json["active"],
         createdAt: DateTime.parse(json["createdAt"]),
         updatedAt: DateTime.parse(json["updatedAt"]),

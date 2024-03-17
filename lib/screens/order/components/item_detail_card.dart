@@ -6,7 +6,20 @@ import 'package:hello_dish_driver/utils/const.dart';
 import 'package:hello_dish_driver/utils/sizedBox.dart';
 
 class ItemDetailCard extends StatelessWidget {
-  const ItemDetailCard({super.key});
+  final String totalPrice;
+  final String deliveryCharge;
+  final String gstCharge;
+  final String packingCharge;
+  final String discountCharge;
+  final String paidTotal;
+  const ItemDetailCard(
+      {super.key,
+      required this.totalPrice,
+      required this.deliveryCharge,
+      required this.gstCharge,
+      required this.packingCharge,
+      required this.discountCharge,
+      required this.paidTotal});
 
   @override
   Widget build(BuildContext context) {
@@ -31,12 +44,16 @@ class ItemDetailCard extends StatelessWidget {
               Text(
                 'Item Total',
                 style: GoogleFonts.poppins(
-                    fontWeight: FontWeight.w400, fontSize: 12, color: AppColors.grey),
+                    fontWeight: FontWeight.w400,
+                    fontSize: 12,
+                    color: AppColors.grey),
               ),
               Text(
-                '₹ 200',
+                '₹ $totalPrice',
                 style: GoogleFonts.poppins(
-                    fontWeight: FontWeight.w500, fontSize: 12, color: AppColors.textBlack),
+                    fontWeight: FontWeight.w500,
+                    fontSize: 12,
+                    color: AppColors.textBlack),
               ),
             ],
           ),
@@ -49,19 +66,25 @@ class ItemDetailCard extends StatelessWidget {
               Text(
                 'Delivery Charge',
                 style: GoogleFonts.poppins(
-                    fontWeight: FontWeight.w400, fontSize: 12, color: AppColors.grey),
+                    fontWeight: FontWeight.w400,
+                    fontSize: 12,
+                    color: AppColors.grey),
               ),
               RichText(
                   text: TextSpan(children: <TextSpan>[
                 TextSpan(
-                  text: '₹ 200',
+                  text: '₹ $deliveryCharge',
                   style: GoogleFonts.poppins(
-                      fontWeight: FontWeight.w500, fontSize: 12, color: AppColors.textBlack),
+                      fontWeight: FontWeight.w500,
+                      fontSize: 12,
+                      color: AppColors.textBlack),
                 ),
                 TextSpan(
-                  text: ' FREE',
+                  text: double.parse(deliveryCharge) > 0 ? "" : ' FREE',
                   style: GoogleFonts.poppins(
-                      fontWeight: FontWeight.w500, fontSize: 12, color: Colors.green),
+                      fontWeight: FontWeight.w500,
+                      fontSize: 12,
+                      color: Colors.green),
                 ),
               ])),
             ],
@@ -75,12 +98,16 @@ class ItemDetailCard extends StatelessWidget {
               Text(
                 'Restaurant GST',
                 style: GoogleFonts.poppins(
-                    fontWeight: FontWeight.w400, fontSize: 12, color: AppColors.grey),
+                    fontWeight: FontWeight.w400,
+                    fontSize: 12,
+                    color: AppColors.grey),
               ),
               Text(
-                '₹ 11.00',
+                '₹ ${gstCharge}',
                 style: GoogleFonts.poppins(
-                    fontWeight: FontWeight.w500, fontSize: 12, color: AppColors.textBlack),
+                    fontWeight: FontWeight.w500,
+                    fontSize: 12,
+                    color: AppColors.textBlack),
               ),
             ],
           ),
@@ -93,12 +120,38 @@ class ItemDetailCard extends StatelessWidget {
               Text(
                 'Restaurant Packing',
                 style: GoogleFonts.poppins(
-                    fontWeight: FontWeight.w400, fontSize: 12, color: AppColors.grey),
+                    fontWeight: FontWeight.w400,
+                    fontSize: 12,
+                    color: AppColors.grey),
               ),
               Text(
-                '₹ 00.40',
+                '₹ $packingCharge',
                 style: GoogleFonts.poppins(
-                    fontWeight: FontWeight.w500, fontSize: 12, color: AppColors.textBlack),
+                    fontWeight: FontWeight.w500,
+                    fontSize: 12,
+                    color: AppColors.textBlack),
+              ),
+            ],
+          ),
+          SizedBox(
+            height: 4,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Discount',
+                style: GoogleFonts.poppins(
+                    fontWeight: FontWeight.w400,
+                    fontSize: 12,
+                    color: AppColors.grey),
+              ),
+              Text(
+                '-₹ $discountCharge',
+                style: GoogleFonts.poppins(
+                    fontWeight: FontWeight.w500,
+                    fontSize: 12,
+                    color: AppColors.textBlack),
               ),
             ],
           ),
@@ -111,12 +164,16 @@ class ItemDetailCard extends StatelessWidget {
               Text(
                 'PAID',
                 style: GoogleFonts.poppins(
-                    fontWeight: FontWeight.w600, fontSize: 12, color: AppColors.textBlack),
+                    fontWeight: FontWeight.w600,
+                    fontSize: 12,
+                    color: AppColors.textBlack),
               ),
               Text(
-                '₹ 211.40',
+                '₹ $paidTotal',
                 style: GoogleFonts.poppins(
-                    fontWeight: FontWeight.w600, fontSize: 12, color: AppColors.textBlack),
+                    fontWeight: FontWeight.w600,
+                    fontSize: 12,
+                    color: AppColors.textBlack),
               ),
             ],
           ),

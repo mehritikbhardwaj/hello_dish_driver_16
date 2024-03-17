@@ -4,6 +4,7 @@ import 'package:hello_dish_driver/screens/order/ui/active_orders.dart';
 import 'package:hello_dish_driver/screens/order/ui/cancel_order.dart';
 
 import '../../../utils/AppColors.dart';
+import '../controller/cancel_order_controller.dart';
 import '../controller/order_controller.dart';
 import 'completed_otrders.dart';
 
@@ -12,8 +13,12 @@ class OderScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final OrderController controller = Get.put(OrderController());
     Get.put(OrderController());
+    Get.put(OrderCancelController());
+
     Get.find<OrderController>().getOrderList();
+    Get.find<OrderCancelController>().getCancelOrderList();
     return DefaultTabController(
       length: 3,
       child: Scaffold(

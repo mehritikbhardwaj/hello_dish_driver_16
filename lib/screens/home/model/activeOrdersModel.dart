@@ -1,26 +1,30 @@
 // To parse this JSON data, do
 //
-//     final allOrder = allOrderFromJson(jsonString);
+//     final activeOrdersModel = activeOrdersModelFromJson(jsonString);
 
+import 'package:meta/meta.dart';
 import 'dart:convert';
 
-AllOrder allOrderFromJson(String str) => AllOrder.fromJson(json.decode(str));
+ActiveOrdersModel activeOrdersModelFromJson(String str) =>
+    ActiveOrdersModel.fromJson(json.decode(str));
 
-String allOrderToJson(AllOrder data) => json.encode(data.toJson());
+String activeOrdersModelToJson(ActiveOrdersModel data) =>
+    json.encode(data.toJson());
 
-class AllOrder {
+class ActiveOrdersModel {
   bool status;
-  List<DatumOrders> data;
+  List<DatumOrderActive> data;
 
-  AllOrder({
+  ActiveOrdersModel({
     required this.status,
     required this.data,
   });
 
-  factory AllOrder.fromJson(Map<String, dynamic> json) => AllOrder(
+  factory ActiveOrdersModel.fromJson(Map<String, dynamic> json) =>
+      ActiveOrdersModel(
         status: json["status"],
-        data: List<DatumOrders>.from(
-            json["data"].map((x) => DatumOrders.fromJson(x))),
+        data: List<DatumOrderActive>.from(
+            json["data"].map((x) => DatumOrderActive.fromJson(x))),
       );
 
   Map<String, dynamic> toJson() => {
@@ -29,13 +33,13 @@ class AllOrder {
       };
 }
 
-class DatumOrders {
+class DatumOrderActive {
   Location location;
   String id;
   RestaurantId restaurantId;
   CustomerId customerId;
   CustomerLocationId customerLocationId;
-  DriverId driverId;
+  dynamic driverId;
   String offer;
   List<OrderItem> orderItems;
   int orderPrice;
@@ -56,11 +60,11 @@ class DatumOrders {
   int rejectByRestaurant;
   int adminPaidToRestaurant;
   int adminPaidToDriver;
-  DateTime createdAt;
-  DateTime updatedAt;
+  String createdAt;
+  String updatedAt;
   int v;
 
-  DatumOrders({
+  DatumOrderActive({
     required this.location,
     required this.id,
     required this.restaurantId,
@@ -92,14 +96,15 @@ class DatumOrders {
     required this.v,
   });
 
-  factory DatumOrders.fromJson(Map<String, dynamic> json) => DatumOrders(
+  factory DatumOrderActive.fromJson(Map<String, dynamic> json) =>
+      DatumOrderActive(
         location: Location.fromJson(json["location"]),
         id: json["_id"],
         restaurantId: RestaurantId.fromJson(json["restaurantId"]),
         customerId: CustomerId.fromJson(json["customerId"]),
         customerLocationId:
             CustomerLocationId.fromJson(json["customerLocationId"]),
-        driverId: DriverId.fromJson(json["driverId"] ?? ''),
+        driverId: json["driverId"],
         offer: json["offer"],
         orderItems: List<OrderItem>.from(
             json["orderItems"].map((x) => OrderItem.fromJson(x))),
@@ -110,9 +115,9 @@ class DatumOrders {
         cancelStatus: json["cancelStatus"],
         status: json["status"],
         discountAmount: json["discountAmount"],
-        deliveryCharge: json["deliveryCharge"].toDouble(),
-        gstCharge: json["gstCharge"].toDouble(),
-        totalCost: json["totalCost"].toDouble(),
+        deliveryCharge: json["deliveryCharge"]?.toDouble(),
+        gstCharge: json["gstCharge"],
+        totalCost: json["totalCost"]?.toDouble(),
         packingCharge: json["packingCharge"],
         lat: json["lat"]?.toDouble(),
         long: json["long"]?.toDouble(),
@@ -121,8 +126,8 @@ class DatumOrders {
         rejectByRestaurant: json["rejectByRestaurant"],
         adminPaidToRestaurant: json["adminPaidToRestaurant"],
         adminPaidToDriver: json["adminPaidToDriver"],
-        createdAt: DateTime.parse(json["createdAt"]),
-        updatedAt: DateTime.parse(json["updatedAt"]),
+        createdAt: json["createdAt"],
+        updatedAt: json["updatedAt"],
         v: json["__v"],
       );
 
@@ -132,7 +137,7 @@ class DatumOrders {
         "restaurantId": restaurantId.toJson(),
         "customerId": customerId.toJson(),
         "customerLocationId": customerLocationId.toJson(),
-        "driverId": driverId.toJson(),
+        "driverId": driverId,
         "offer": offer,
         "orderItems": List<dynamic>.from(orderItems.map((x) => x.toJson())),
         "orderPrice": orderPrice,
@@ -153,8 +158,8 @@ class DatumOrders {
         "rejectByRestaurant": rejectByRestaurant,
         "adminPaidToRestaurant": adminPaidToRestaurant,
         "adminPaidToDriver": adminPaidToDriver,
-        "createdAt": createdAt.toIso8601String(),
-        "updatedAt": updatedAt.toIso8601String(),
+        "createdAt": createdAt,
+        "updatedAt": updatedAt,
         "__v": v,
       };
 }
@@ -169,8 +174,8 @@ class CustomerId {
   DateTime otpCreatedAt;
   double lat;
   double long;
-  DateTime createdAt;
-  DateTime updatedAt;
+  String createdAt;
+  String updatedAt;
   int v;
   String otp;
 
@@ -200,8 +205,8 @@ class CustomerId {
         otpCreatedAt: DateTime.parse(json["otpCreatedAt"]),
         lat: json["lat"]?.toDouble(),
         long: json["long"]?.toDouble(),
-        createdAt: DateTime.parse(json["createdAt"]),
-        updatedAt: DateTime.parse(json["updatedAt"]),
+        createdAt: json["createdAt"],
+        updatedAt: json["updatedAt"],
         v: json["__v"],
         otp: json["otp"],
       );
@@ -216,8 +221,8 @@ class CustomerId {
         "otpCreatedAt": otpCreatedAt.toIso8601String(),
         "lat": lat,
         "long": long,
-        "createdAt": createdAt.toIso8601String(),
-        "updatedAt": updatedAt.toIso8601String(),
+        "createdAt": createdAt,
+        "updatedAt": updatedAt,
         "__v": v,
         "otp": otp,
       };
@@ -232,8 +237,8 @@ class CustomerLocationId {
   String address;
   double lat;
   double long;
-  DateTime createdAt;
-  DateTime updatedAt;
+  String createdAt;
+  String updatedAt;
   int v;
 
   CustomerLocationId({
@@ -260,8 +265,8 @@ class CustomerLocationId {
         address: json["address"],
         lat: json["lat"]?.toDouble(),
         long: json["long"]?.toDouble(),
-        createdAt: DateTime.parse(json["createdAt"]),
-        updatedAt: DateTime.parse(json["updatedAt"]),
+        createdAt: json["createdAt"],
+        updatedAt: json["updatedAt"],
         v: json["__v"],
       );
 
@@ -274,112 +279,8 @@ class CustomerLocationId {
         "address": address,
         "lat": lat,
         "long": long,
-        "createdAt": createdAt.toIso8601String(),
-        "updatedAt": updatedAt.toIso8601String(),
-        "__v": v,
-      };
-}
-
-class DriverId {
-  String tshirtSize;
-  String transactionId;
-  String id;
-  String name;
-  String phone;
-  String email;
-  String profileImage;
-  String password;
-  int driverReview;
-  int rating;
-  int active;
-  DateTime dateOfBirth;
-  String gender;
-  dynamic otpCreatedAt;
-  int status;
-  double lat;
-  double long;
-  int onlineOffline;
-  String address;
-  int vehicleType;
-  DateTime createdAt;
-  DateTime updatedAt;
-  int v;
-
-  DriverId({
-    required this.tshirtSize,
-    required this.transactionId,
-    required this.id,
-    required this.name,
-    required this.phone,
-    required this.email,
-    required this.profileImage,
-    required this.password,
-    required this.driverReview,
-    required this.rating,
-    required this.active,
-    required this.dateOfBirth,
-    required this.gender,
-    required this.otpCreatedAt,
-    required this.status,
-    required this.lat,
-    required this.long,
-    required this.onlineOffline,
-    required this.address,
-    required this.vehicleType,
-    required this.createdAt,
-    required this.updatedAt,
-    required this.v,
-  });
-
-  factory DriverId.fromJson(Map<String, dynamic> json) => DriverId(
-        tshirtSize: json["tshirtSize"],
-        transactionId: json["transactionId"],
-        id: json["_id"],
-        name: json["name"],
-        phone: json["phone"],
-        email: json["email"],
-        profileImage: json["profileImage"],
-        password: json["password"],
-        driverReview: json["driverReview"],
-        rating: json["rating"],
-        active: json["active"],
-        dateOfBirth: DateTime.parse(json["dateOfBirth"]),
-        gender: json["gender"],
-        otpCreatedAt: json["otpCreatedAt"],
-        status: json["status"],
-        lat: json["lat"]?.toDouble(),
-        long: json["long"]?.toDouble(),
-        onlineOffline: json["onlineOffline"],
-        address: json["address"],
-        vehicleType: json["vehicleType"],
-        createdAt: DateTime.parse(json["createdAt"]),
-        updatedAt: DateTime.parse(json["updatedAt"]),
-        v: json["__v"],
-      );
-
-  Map<String, dynamic> toJson() => {
-        "tshirtSize": tshirtSize,
-        "transactionId": transactionId,
-        "_id": id,
-        "name": name,
-        "phone": phone,
-        "email": email,
-        "profileImage": profileImage,
-        "password": password,
-        "driverReview": driverReview,
-        "rating": rating,
-        "active": active,
-        "dateOfBirth": dateOfBirth.toIso8601String(),
-        "gender": gender,
-        "otpCreatedAt": otpCreatedAt,
-        "status": status,
-        "lat": lat,
-        "long": long,
-        "onlineOffline": onlineOffline,
-        "address": address,
-        "vehicleType": vehicleType,
-        "createdAt": createdAt.toIso8601String(),
-        "updatedAt": updatedAt.toIso8601String(),
+        "createdAt": createdAt,
+        "updatedAt": updatedAt,
         "__v": v,
       };
 }
@@ -453,8 +354,8 @@ class RestaurantId {
   int onlineOffline;
   int restaurantReview;
   String uniqueId;
-  DateTime createdAt;
-  DateTime updatedAt;
+  String createdAt;
+  String updatedAt;
   int v;
   String otp;
 
@@ -504,8 +405,8 @@ class RestaurantId {
         onlineOffline: json["onlineOffline"],
         restaurantReview: json["restaurantReview"],
         uniqueId: json["uniqueId"],
-        createdAt: DateTime.parse(json["createdAt"]),
-        updatedAt: DateTime.parse(json["updatedAt"]),
+        createdAt: json["createdAt"],
+        updatedAt: json["updatedAt"],
         v: json["__v"],
         otp: json["otp"],
       );
@@ -530,8 +431,8 @@ class RestaurantId {
         "onlineOffline": onlineOffline,
         "restaurantReview": restaurantReview,
         "uniqueId": uniqueId,
-        "createdAt": createdAt.toIso8601String(),
-        "updatedAt": updatedAt.toIso8601String(),
+        "createdAt": createdAt,
+        "updatedAt": updatedAt,
         "__v": v,
         "otp": otp,
       };
