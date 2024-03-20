@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hello_dish_driver/screens/order/controller/order_controller.dart';
+import 'package:hello_dish_driver/utils/api_manager/apis.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:intl/intl.dart';
 
@@ -132,12 +133,12 @@ completedOrderCard(
                 borderRadius: BorderRadius.circular(22.0),
                 child: CachedNetworkImage(
                   fit: BoxFit.cover,
-                  imageUrl: imgUrl ??
-                      "https://assets.gqindia.com/photos/6213cbed18140d747a9b0a6e/16:9/w_1920,h_1080,c_limit/new%20restaurant%20menus%20in%20Mumbai.jpg",
+                  imageUrl: APIs.imageUrl + imgUrl,
                   placeholder: (context, url) =>
                       const CircularProgressIndicator(),
-                  errorWidget: (context, url, error) =>
-                      const Icon(Iconsax.user),
+                  errorWidget: (context, url, error) => Image.network(
+                    "https://assets.gqindia.com/photos/6213cbed18140d747a9b0a6e/16:9/w_1920,h_1080,c_limit/new%20restaurant%20menus%20in%20Mumbai.jpg",
+                  ),
                 ),
               ),
             ),

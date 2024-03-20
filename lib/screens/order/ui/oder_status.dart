@@ -42,8 +42,16 @@ class _OrderStatusState extends State<OrderStatus> {
   }
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    setState(() {
+      getTime();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    getTime();
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -249,8 +257,8 @@ class _OrderStatusState extends State<OrderStatus> {
                           text: TextSpan(
                             children: <TextSpan>[
                               TextSpan(
-                                  text:
-                                      'Delivery at  🏡 ${widget.list.customerLocationId.locationSaveAs.toString()} by',
+                                  text: "Delivery at  🏡",
+                                  // 'Delivery at  🏡 ${widget.list.customerLocationId.locationSaveAs.toString()} by',
                                   style: GoogleFonts.poppins(
                                       fontSize: 10,
                                       fontWeight: FontWeight.w400,

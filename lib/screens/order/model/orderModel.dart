@@ -34,7 +34,7 @@ class DatumOrders {
   String id;
   RestaurantId restaurantId;
   CustomerId customerId;
-  CustomerLocationId customerLocationId;
+//  CustomerLocationId customerLocationId;
   DriverId driverId;
   String offer;
   List<OrderItem> orderItems;
@@ -65,7 +65,7 @@ class DatumOrders {
     required this.id,
     required this.restaurantId,
     required this.customerId,
-    required this.customerLocationId,
+    // required this.customerLocationId,
     required this.driverId,
     required this.offer,
     required this.orderItems,
@@ -97,8 +97,8 @@ class DatumOrders {
         id: json["_id"],
         restaurantId: RestaurantId.fromJson(json["restaurantId"]),
         customerId: CustomerId.fromJson(json["customerId"]),
-        customerLocationId:
-            CustomerLocationId.fromJson(json["customerLocationId"]),
+        // customerLocationId:
+        //     CustomerLocationId.fromJson(json["customerLocationId"]),
         driverId: DriverId.fromJson(json["driverId"] ?? ''),
         offer: json["offer"],
         orderItems: List<OrderItem>.from(
@@ -131,7 +131,7 @@ class DatumOrders {
         "_id": id,
         "restaurantId": restaurantId.toJson(),
         "customerId": customerId.toJson(),
-        "customerLocationId": customerLocationId.toJson(),
+        //  "customerLocationId": customerLocationId.toJson(),
         "driverId": driverId.toJson(),
         "offer": offer,
         "orderItems": List<dynamic>.from(orderItems.map((x) => x.toJson())),
